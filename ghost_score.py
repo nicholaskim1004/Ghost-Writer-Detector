@@ -167,8 +167,9 @@ for i in range(len(test_data)):
     tar_art_mean_sgd, tar_art_std_sgd = art_to_art_info[f'{row_ref_art}-{row_tar_art_sgd}']
     z_scores_sgd_boot.append((ghost_p_test-tar_art_mean_sgd)/tar_art_std_sgd)
 
-test_data_clean['predicted ghost writer'] = ghost_lab_test
-test_data_clean['z score sgd boot'] = z_scores_sgd_boot
-print(test_data_clean.loc[:,['song_title','artist','predicted ghost writer','z score sgd boot']])
+test_copy = test_data.copy()
+test_copy['predicted ghost writer'] = ghost_lab_test
+test_copy['z score sgd boot'] = z_scores_sgd_boot
+print(test_copy.loc[:,['song_title','artist','predicted ghost writer','z score sgd boot']])
 
 
