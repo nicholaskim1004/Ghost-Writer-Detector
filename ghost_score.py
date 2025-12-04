@@ -134,24 +134,24 @@ for sim in range(num_sim):
     ref_artist = hip['artist'][ind_to_main]
     ref_artist_id = artist_mapping[ref_artist]
     
-    for pred in pred_val:
-        p_for_ref = pred[ref_artist_id]
+    p_for_ref = pred_val[rand_ind][ref_artist_id]
         
-        diff = pred - p_for_ref
-        similar_score = torch.tensor([1/(1+abs(d)) for d in diff])
+    diff = pred_val[rand_ind] - p_for_ref
+
+    similar_score = torch.tensor([1/(1+abs(d)) for d in diff])
+
+    total = sum(similar_score) - 1
     
-        total = sum(similar_score) - 1
+    p_ghost = torch.tensor([s/total for s in similar_score])
+    
+    for i, p in enumerate(p_ghost):
+        tar_artist = id_to_name[i]
+        if tar_artist == ref_artist:
+            continue
         
-        p_ghost = torch.tensor([s/total for s in similar_score])
+        key = f"{ref_artist}-{tar_artist}"
         
-        for i, p in enumerate(p_ghost):
-            tar_artist = id_to_name[i]
-            if tar_artist == ref_artist:
-                continue
-            
-            key = f"{ref_artist}-{tar_artist}"
-            
-            samples.setdefault(key, []).append(float(p))
+        samples.setdefault(key, []).append(float(p))
 
 print(samples)
     
