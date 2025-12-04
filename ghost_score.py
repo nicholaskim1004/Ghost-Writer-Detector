@@ -53,7 +53,6 @@ id_to_name = {v: k for k, v in artist_mapping.items()}
 
 train_data = hip[hip['pot_ghost'] == 0]
 test_data = hip[hip['pot_ghost'] == 1]
-test_data['artist_id'] = test_data['artist'].map(artist_mapping)
 
 tfidf = TfidfVectorizer(
     lowercase=True,
@@ -66,7 +65,7 @@ train_data['artist_id'] = train_data['artist'].map(artist_mapping)
 train_data = train_data.loc[:,['main_artist_lyrics_joined', 'artist_id']]
 
 test_data['artist_id'] = test_data['artist'].map(artist_mapping)
-test_data = test_data.loc[:,['main_artist_lyrics_joined', 'artist_id']]
+test_data_clean = test_data.loc[:,['main_artist_lyrics_joined', 'artist_id']]
 
 train_data, val_data = train_test_split(train_data, test_size=0.2, random_state=42, stratify=train_data['artist_id'])
 
@@ -79,9 +78,9 @@ x_val = torch.tensor(X_val.toarray(), dtype=torch.float32)
 y_val = torch.tensor(val_data['artist_id'].values,dtype=torch.long)
 
 
-X_test = tfidf.transform(test_data['main_artist_lyrics_joined'])
+X_test = tfidf.transform(test_data_clean['main_artist_lyrics_joined'])
 x_test = torch.tensor(X_test.toarray(), dtype=torch.float32)
-y_test = torch.tensor(test_data['artist_id'].values, dtype = torch.long)
+y_test = torch.tensor(test_data_clean['artist_id'].values, dtype = torch.long)
 
 model = MultiClassRegression(x_train.shape[1], len(artist_mapping))
 
@@ -153,7 +152,22 @@ for sim in range(num_sim):
         
         samples.setdefault(key, []).append(float(p))
 
-print(samples)
+#use these bootstrap samples to calculate mean and std for each art to art distribution
+art_to_art_info = {}
+for key, value in samples.items():
+    art_to_art_info[key] = [np.mean(value), np.std(value)]
     
+#now will use these values to create z-scores for our test ghost scores
+z_scores_sgd_boot = []
+
+for i in range(len(test_data)):
+    row_ref_art = test_data.iloc[i,0]
+    row_tar_art_sgd = ghost_lab_test[i]
+    
+    tar_art_mean_sgd, tar_art_std_sgd = art_to_art_info[f'{row_ref_art}-{row_tar_art_sgd}']
+    z_scores_sgd_boot.append((ghost_p_test-tar_art_mean_sgd)/tar_art_std_sgd)
+
+test_data_clean['z score sgd boot'] = z_scores_sgd_boot
+print(test_data_clean)
 
 
