@@ -165,7 +165,7 @@ for i in range(len(test_data)):
     row_tar_art_sgd = ghost_lab_test[i]
     
     tar_art_mean_sgd, tar_art_std_sgd = art_to_art_info[f'{row_ref_art}-{row_tar_art_sgd}']
-    z_scores_sgd_boot.append((ghost_p_test-tar_art_mean_sgd)/tar_art_std_sgd)
+    z_scores_sgd_boot.append((ghost_p_test[i]-tar_art_mean_sgd)/tar_art_std_sgd)
 
 test_copy = test_data.copy()
 test_copy['predicted ghost writer'] = ghost_lab_test
