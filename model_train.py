@@ -509,22 +509,6 @@ if __name__ == "__main__":
     except NameError:
         print("Please provide a pandas DataFrame named `hip` or call get_trainer(...) with your dataframe.")
     else:
-        # BERT frozen example:
-        trainer = get_trainer(
-            "bert",
-            hip,
-            freeze_bert=True,
-            num_epochs=3,
-            batch_size=16,
-            lr=1e-4,
-            output_dir="models",
-        )
-        bert_accs = trainer.train()
-
-        # TF-IDF full-batch example:
-        t_trainer = get_trainer("tfidf", hip, num_epochs=200, lr=1e-4)
-        t_trainer.train()
-
-        # TF-IDF SGD example:
-        sgd_trainer = get_trainer("tfidf_sgd", hip, num_epochs=50, lr=1e-4)
+        
+        sgd_trainer = get_trainer("tfidf_sgd_big", hip, num_epochs=50, lr=1e-4)
         sgd_trainer.train()
