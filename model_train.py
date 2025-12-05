@@ -450,11 +450,11 @@ class TfIdfSGDTrainer(BaseTrainer):
             last_loss = None
             for _ in range(n):
                 index = np.random.randint(0, n)
-                x_row = torch.tensor(self.X_train_np[index]).unsqueeze(0).to(self.device)
-                y_row = torch.tensor(self.y_train_np[index]).unsqueeze(0).to(self.device)
+                x_row = torch.tensor(self.X_train_np[index], dtype=torch.float32).unsqueeze(0).to(self.device)
+                y_row = torch.tensor(self.y_train_np[index], dtype=torch.long).unsqueeze(0).to(self.device)
 
                 predicted = self.model(x_row)
-                loss = self.loss_fn(predicted, y_row)
+                loss = self.loss_fn(predicted,y_row)
 
                 self.optimizer.zero_grad()
                 loss.backward()
@@ -511,5 +511,8 @@ if __name__ == "__main__":
         print("Please provide a pandas DataFrame named `hip` or call get_trainer(...) with your dataframe.")
     else:
         
-        sgd_trainer = get_trainer("tfidf_sgd_big", hip, num_epochs=15, lr=1e-4)
-        sgd_trainer.train()
+        #sgd_trainer = get_trainer("tfidf_sgd_big", hip, num_epochs=15, lr=1e-4)
+        #sgd_trainer.train()
+        
+        trainer = get_trainer("tfidf_sgd_big", hip, num_epochs=1, lr=1e-4)
+        trainer.train()
