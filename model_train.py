@@ -511,8 +511,5 @@ if __name__ == "__main__":
         print("Please provide a pandas DataFrame named `hip` or call get_trainer(...) with your dataframe.")
     else:
         
-        #sgd_trainer = get_trainer("tfidf_sgd_big", hip, num_epochs=15, lr=1e-4)
-        #sgd_trainer.train()
-        
-        trainer = get_trainer("tfidf_sgd_big", hip, num_epochs=1, lr=1e-4)
-        trainer.train()
+        sgd_trainer = get_trainer("tfidf_sgd_big", hip, num_epochs=15, lr=1e-4)
+        sgd_trainer.train()
