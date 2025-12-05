@@ -7,7 +7,8 @@ import numpy as np
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset
-from transformers import BertTokenizer, BertModel, AdamW
+from torch.optim import AdamW
+from transformers import BertTokenizer, BertModel
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
@@ -510,5 +511,5 @@ if __name__ == "__main__":
         print("Please provide a pandas DataFrame named `hip` or call get_trainer(...) with your dataframe.")
     else:
         
-        sgd_trainer = get_trainer("tfidf_sgd_big", hip, num_epochs=50, lr=1e-4)
+        sgd_trainer = get_trainer("tfidf_sgd_big", hip, num_epochs=15, lr=1e-4)
         sgd_trainer.train()
