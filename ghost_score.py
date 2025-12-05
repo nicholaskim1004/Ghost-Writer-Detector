@@ -173,3 +173,4 @@ test_copy['z score sgd boot'] = z_scores_sgd_boot
 print(test_copy.loc[:,['song_title','artist','predicted ghost writer','z score sgd boot']])
 
 
+print(ghost_lab_test)
