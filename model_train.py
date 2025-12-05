@@ -414,9 +414,9 @@ class TfIdfSGDTrainer(BaseTrainer):
 
         # instantiate model
         if self.big:
-            self.model = MultiClassRegressionBig(self.X_train.shape[1], self.num_classes).to(self.device)
+            self.model = MultiClassRegressionBig(self.X_train_np.shape[1], self.num_classes).to(self.device)
         else:
-            self.model = MultiClassRegression(self.X_train.shape[1], self.num_classes).to(self.device)
+            self.model = MultiClassRegression(self.X_train_np.shape[1], self.num_classes).to(self.device)
 
         self.optimizer = AdamW(self.model.parameters(), lr=self.lr)
 
