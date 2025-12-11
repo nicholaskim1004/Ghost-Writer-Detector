@@ -280,3 +280,22 @@ hip = hip.reset_index(drop=True)
 
 hip.to_csv('data/cleaned_hip_dat.csv', index = False)
 
+##running on ghost test
+
+ghost_test = pd.read_csv('data/ghost_test_dat.csv')
+ghost_test['featured_artist'] = hip.apply(
+    lambda row: get_featured_artist(row),
+    axis=1
+)
+ghost_test['main_artist_lyrics'] = hip.apply(
+    lambda row: get_main_artist_verses(row['lyrics'], row['artist'], all_artists),
+    axis=1
+)
+
+# Join the verses back into a single string per song
+ghost_test['main_artist_lyrics_joined'] = ghost_test['main_artist_lyrics'].apply(lambda x: "\n".join(x))
+
+#cleaning by removing \n
+ghost_test['main_artist_lyrics_joined'] = ghost_test['main_artist_lyrics_joined'].str.replace('\n', ' ')
+
+ghost_test.to_csv('data/cleaned_ghost_test.csv', index = False)
