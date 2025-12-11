@@ -22,9 +22,12 @@ class MultiClassRegression(nn.Module):
         probs = self.layer2(probs)
         return probs
     
-def get_ghost_score(row, predicted):
-    get_art = hip.loc[row.name,'artist']
-    ref_id = artist_mapping[get_art]
+def get_ghost_score(data, row, predicted):
+    if data == 'hip':
+        get_art = hip.loc[row.name,'artist']
+        ref_id = artist_mapping[get_art]
+    
+    ref_id = row.artist_id
     ref_prob = predicted[ref_id]
     
     diff = predicted - ref_prob 
@@ -106,7 +109,7 @@ ghost_p_test = []
 ghost_lab_test = []
 
 for i in range(len(test_data)):
-    p_ghost, ghost_label = get_ghost_score(test_data.iloc[i,],pred_test[i])
+    p_ghost, ghost_label = get_ghost_score('hip',test_data.iloc[i,],pred_test[i])
 
     ghost_p_test.append(p_ghost)
     ghost_lab_test.append(id_to_name[ghost_label])
@@ -115,7 +118,7 @@ ghost_p_val = []
 ghost_lab_val = []
 
 for i in range(len(val_data)):
-    p_ghost, ghost_label = get_ghost_score(val_data.iloc[i,],pred_val[i])
+    p_ghost, ghost_label = get_ghost_score('hip',val_data.iloc[i,],pred_val[i])
 
     ghost_p_val.append(p_ghost)
     ghost_lab_val.append(id_to_name[ghost_label])
@@ -207,14 +210,11 @@ test_copy['z score sgd boot'] = z_scores_sgd_boot
 print(test_copy.loc[:,['song_title','artist','predicted ghost writer','z score sgd boot']])
 
 
-print(ghost_lab_test)
-
-
 ##trying score on more songs
 ghost_test = pd.read_csv('data/cleaned_ghost_test.csv')
 
 ghost_test['artist_id'] = ghost_test['artist'].map(artist_mapping)
-ghost_test = ghhost_test.loc[:,['main_artist_lyrics_joined', 'artist_id']]
+ghost_test = ghost_test.loc[:, ['artist','song_title','main_artist_lyrics_joined','artist_id']]
 
 X_test = tfidf.transform(ghost_test['main_artist_lyrics_joined'])
 x_test = torch.tensor(X_test.toarray(), dtype=torch.float32)
@@ -232,7 +232,7 @@ ghost_p_test = []
 ghost_lab_test = []
 
 for i in range(len(ghost_test)):
-    p_ghost, ghost_label = get_ghost_score(ghost_test.iloc[i,],pred_test[i])
+    p_ghost, ghost_label = get_ghost_score('ghost_test',ghost_test.iloc[i,],pred_test[i])
 
     ghost_p_test.append(p_ghost)
     ghost_lab_test.append(id_to_name[ghost_label])
@@ -241,7 +241,7 @@ for i in range(len(ghost_test)):
 z_scores_sgd_boot = []
 
 for i in range(len(ghost_test)):
-    row_ref_art = test_data.iloc[i,0]
+    row_ref_art = ghost_test.iloc[i,0]
     row_tar_art_sgd = ghost_lab_test[i]
     
     tar_art_mean_sgd, tar_art_std_sgd = art_to_art_info[f'{row_ref_art}-{row_tar_art_sgd}']
